@@ -1,0 +1,29 @@
+{
+  "name": "blog-list",
+  "version": "1.0.0",
+  "description": "A fullstack blog app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vikram42003/Blog-List.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vikram42003/Blog-List/issues"
+  },
+  "homepage": "https://github.com/vikram42003/Blog-List#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.5.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.7.0",
+    "nodemon": "^3.1.4"
+  }
+}
