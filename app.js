@@ -1,0 +1,25 @@
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+const config = require("./utils/config");
+const logger = require("./utils/logger");
+
+const blogsRouter = require("./controllers/blogs");
+
+logger.info("Connecting to", config.MONGODB_URL);
+mongoose
+  .connect(config.MONGODB_URL)
+  .then(() => {
+    logger.info("Connected to MongoDB");
+  })
+  .catch(error => {
+    logger.error("Could not connect to MongoDB\n", error);
+  });
+
+app.use(cors());
+app.use(express.json());
+app.use("/", blogsRouter);
+
+module.exports = app;
