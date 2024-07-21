@@ -21,8 +21,10 @@
   "homepage": "https://github.com/vikram42003/Blog-List#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-async-errors": "^3.1.1",
     "lodash": "^4.17.21",
     "mongoose": "^8.5.1"
   },
@@ -30,6 +32,7 @@
     "@eslint/js": "^9.7.0",
     "eslint": "^9.7.0",
     "globals": "^15.8.0",
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "supertest": "^7.0.0"
   }
 }
