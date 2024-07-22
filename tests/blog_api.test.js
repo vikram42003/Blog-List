@@ -100,6 +100,34 @@ describe("POST requests to api/blogs", async () => {
   });
 });
 
+describe("In POST request, if the like property is missing", async () => {
+  const newBlog = {
+    title: "test blog",
+    author: "me",
+    url: "blog.com i guess",
+  };
+
+  it.only("the new note is save in the server with 0 likes", async () => {
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const blogs = await test_helper.blogsInDb();
+
+    const areLikeZero = blogs.some(blog => {
+      if (blog.name === newBlog.name) {
+        if (blog.likes === 0) return true;
+      } else {
+        return false;
+      }
+    });
+
+    assert(areLikeZero);
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
