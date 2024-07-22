@@ -128,6 +128,18 @@ describe("In POST request, if the like property is missing", async () => {
   });
 });
 
+describe("In POST requests, if the title or url are missing", async () => {
+  const newBlog = {
+    author: "me",
+    url: "blog.com i guess",
+    likes: 1,
+  };
+
+  it.only("server responds with 400", async () => {
+    await api.post("/api/blogs").send(newBlog).expect(400);
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
 });

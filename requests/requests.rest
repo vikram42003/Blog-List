@@ -5,7 +5,6 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Testing Again!",
   "author": "me!",
   "url": "dont have one!",
   "likes": 99999

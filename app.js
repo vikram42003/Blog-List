@@ -6,6 +6,7 @@ const cors = require("cors");
 
 const config = require("./utils/config");
 const logger = require("./utils/logger");
+const middleware = require("./utils/middleware");
 
 const blogsRouter = require("./controllers/blogs");
 
@@ -22,5 +23,6 @@ mongoose
 app.use(cors());
 app.use(express.json());
 app.use("/", blogsRouter);
+app.use(middleware.errorHandler);
 
 module.exports = app;
