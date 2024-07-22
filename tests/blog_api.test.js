@@ -26,14 +26,14 @@ beforeEach(async () => {
 });
 
 describe("GET requests to 'api/blogs'", () => {
-  it.only("should return blogs as json", async () => {
+  it("should return blogs as json", async () => {
     await api
       .get("/api/blogs")
       .expect(200)
       .expect("Content-Type", /application\/json/);
   });
 
-  it.only("should return all blogs", async () => {
+  it("should return all blogs", async () => {
     const response = await api.get("/api/blogs");
 
     assert.equal(response.body.length, test_helper.blogs.length);
@@ -41,13 +41,13 @@ describe("GET requests to 'api/blogs'", () => {
 });
 
 describe("in the returned blogs properties", () => {
-  it.only("the '_id' property is not present", async () => {
+  it("the '_id' property is not present", async () => {
     const response = (await api.get("/api/blogs")).body;
 
     assert(!Object.hasOwn(response[0], "_id"));
   });
 
-  it.only("the 'id' property is present", async () => {
+  it("the 'id' property is present", async () => {
     const response = (await api.get("/api/blogs")).body;
 
     assert(Object.hasOwn(response[0], "id"));
@@ -62,7 +62,7 @@ describe("POST requests to api/blogs", async () => {
     likes: 9999,
   };
 
-  it.only("a new blog is created", async () => {
+  it("a new blog is created", async () => {
     await api
       .post("/api/blogs")
       .send(newBlog)
@@ -74,7 +74,7 @@ describe("POST requests to api/blogs", async () => {
     assert.strictEqual(blogs.length, test_helper.blogs.length + 1);
   });
 
-  it.only("contents of the new blog are correct", async () => {
+  it("contents of the new blog are correct", async () => {
     await api
       .post("/api/blogs")
       .send(newBlog)
@@ -107,7 +107,7 @@ describe("In POST request, if the like property is missing", async () => {
     url: "blog.com i guess",
   };
 
-  it.only("the new note is save in the server with 0 likes", async () => {
+  it("the new note is save in the server with 0 likes", async () => {
     await api
       .post("/api/blogs")
       .send(newBlog)
@@ -135,8 +135,22 @@ describe("In POST requests, if the title or url are missing", async () => {
     likes: 1,
   };
 
-  it.only("server responds with 400", async () => {
+  it("server responds with 400", async () => {
     await api.post("/api/blogs").send(newBlog).expect(400);
+  });
+});
+
+describe("DELETE requests to /api/blogs/:id", async () => {
+  const newBlog = {
+    title: "test blog",
+    author: "me",
+    url: "blog.com i guess",
+    likes: 9999,
+  };
+
+  it.only("deletes blog with the given id", async () => {
+    const res = await api.post("/api/blogs").send(newBlog);
+    await api.delete(`/api/blogs/${res.body.id}`).expect(400);
   });
 });
 
