@@ -148,9 +148,33 @@ describe("DELETE requests to /api/blogs/:id", async () => {
     likes: 9999,
   };
 
-  it.only("deletes blog with the given id", async () => {
+  it("deletes blog with the given id", async () => {
     const res = await api.post("/api/blogs").send(newBlog);
     await api.delete(`/api/blogs/${res.body.id}`).expect(400);
+  });
+});
+
+describe("PUT requests to /api/blogs/:id", async () => {
+  const newBlog = {
+    title: "test blog",
+    author: "me",
+    url: "blog.com i guess",
+    likes: 9999,
+  };
+
+  const toUpdateTo = {
+    title: "testing put functionality",
+    author: "might be me",
+    url: "still dont have one",
+    likes: 0,
+  };
+
+  it("updates the specified blog", async () => {
+    const res = await api.post("/api/blogs").send(newBlog);
+    const { body: returnedBlog } = await api.put(`/api/blogs/${res.body.id}`).send(toUpdateTo).expect(200);
+    const tempToUpdateTo = { ...toUpdateTo, id: returnedBlog.id };
+
+    assert.deepStrictEqual(returnedBlog, tempToUpdateTo);
   });
 });
 
