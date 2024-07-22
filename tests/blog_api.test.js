@@ -54,6 +54,52 @@ describe("in the returned blogs properties", () => {
   });
 });
 
+describe("POST requests to api/blogs", async () => {
+  const newBlog = {
+    title: "test blog",
+    author: "me",
+    url: "blog.com i guess",
+    likes: 9999,
+  };
+
+  it.only("a new blog is created", async () => {
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const blogs = await test_helper.blogsInDb();
+
+    assert.strictEqual(blogs.length, test_helper.blogs.length + 1);
+  });
+
+  it.only("contents of the new blog are correct", async () => {
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const blogs = await test_helper.blogsInDb();
+
+    const isBlogPresent = blogs.some(blog => {
+      if (
+        blog.title === newBlog.title &&
+        blog.author === newBlog.author &&
+        blog.url === newBlog.url &&
+        blog.likes === newBlog.likes
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+
+    assert(isBlogPresent);
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
