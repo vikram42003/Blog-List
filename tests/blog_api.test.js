@@ -40,6 +40,20 @@ describe("GET requests to 'api/blogs'", () => {
   });
 });
 
+describe("in the returned blogs properties", () => {
+  it.only("the '_id' property is not present", async () => {
+    const response = (await api.get("/api/blogs")).body;
+
+    assert(!Object.hasOwn(response[0], "_id"));
+  });
+
+  it.only("the 'id' property is present", async () => {
+    const response = (await api.get("/api/blogs")).body;
+
+    assert(Object.hasOwn(response[0], "id"));
+  });
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
