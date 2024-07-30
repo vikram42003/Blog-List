@@ -23,3 +23,16 @@ Content-Type: application/json
   "url": "dont have one!",
   "likes": 10
 }
+
+###
+GET http://localhost:3003/api/users
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "test",
+  "name": "testUser",
+  "password": "12345"
+}

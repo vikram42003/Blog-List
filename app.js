@@ -8,6 +8,7 @@ const config = require("./utils/config");
 const logger = require("./utils/logger");
 const middleware = require("./utils/middleware");
 
+const usersRouter = require("./controllers/users");
 const blogsRouter = require("./controllers/blogs");
 
 logger.info("Connecting to", config.MONGODB_URL);
@@ -22,6 +23,7 @@ mongoose
 
 app.use(cors());
 app.use(express.json());
+app.use("/", usersRouter);
 app.use("/", blogsRouter);
 app.use(middleware.errorHandler);
 
