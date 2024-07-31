@@ -129,7 +129,7 @@ describe("In POST request to /api/blogs, if the like property is missing", () =>
   });
 });
 
-describe.only("In POST request to /api/users", () => {
+describe("In POST request to /api/users", () => {
   beforeEach(async () => {
     await User.deleteMany({});
   });
