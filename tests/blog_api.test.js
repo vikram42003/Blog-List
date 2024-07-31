@@ -7,6 +7,7 @@ const app = require("../app");
 const api = supertest(app);
 
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const test_helper = require("./test_helper");
 
 beforeEach(async () => {
@@ -38,23 +39,23 @@ describe("GET requests to 'api/blogs'", () => {
 
     assert.equal(response.body.length, test_helper.blogs.length);
   });
+
+  describe("in the returned blogs properties", () => {
+    it("the '_id' property is not present", async () => {
+      const response = (await api.get("/api/blogs")).body;
+
+      assert(!Object.hasOwn(response[0], "_id"));
+    });
+
+    it("the 'id' property is present", async () => {
+      const response = (await api.get("/api/blogs")).body;
+
+      assert(Object.hasOwn(response[0], "id"));
+    });
+  });
 });
 
-describe("in the returned blogs properties", () => {
-  it("the '_id' property is not present", async () => {
-    const response = (await api.get("/api/blogs")).body;
-
-    assert(!Object.hasOwn(response[0], "_id"));
-  });
-
-  it("the 'id' property is present", async () => {
-    const response = (await api.get("/api/blogs")).body;
-
-    assert(Object.hasOwn(response[0], "id"));
-  });
-});
-
-describe("POST requests to api/blogs", async () => {
+describe("POST requests to api/blogs", () => {
   const newBlog = {
     title: "test blog",
     author: "me",
@@ -100,7 +101,7 @@ describe("POST requests to api/blogs", async () => {
   });
 });
 
-describe("In POST request, if the like property is missing", async () => {
+describe("In POST request to /api/blogs, if the like property is missing", () => {
   const newBlog = {
     title: "test blog",
     author: "me",
@@ -128,7 +129,79 @@ describe("In POST request, if the like property is missing", async () => {
   });
 });
 
-describe("In POST requests, if the title or url are missing", async () => {
+describe.only("In POST request to /api/users", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+  });
+
+  it("sucessfully creates a new user", async () => {
+    const user = {
+      username: "R3LL@NA",
+      name: "Rellana of Caria",
+      password: "OmgILoveMessmer",
+    };
+
+    await api.post("/api/users").send(user).expect(201);
+  });
+
+  describe("the validation", () => {
+    it("fails if username is already in use", async () => {
+      const user = {
+        username: "duplicate name",
+        name: "name, duplicate",
+        password: "password",
+      };
+      const duplicateUser = {
+        username: "duplicate name",
+        name: "name, not duplicate",
+        password: "pass",
+      };
+
+      await api.post("/api/users").send(user);
+      await api.post("/api/users").send(duplicateUser).expect(400);
+    });
+
+    it("fails if username is missing", async () => {
+      const invalidUser = {
+        name: "some name",
+        password: "some password",
+      };
+
+      await api.post("/api/users").send(invalidUser).expect(400);
+    });
+
+    it("fails if password is missing", async () => {
+      const invalidUser = {
+        username: "some username",
+        name: "na ame",
+      };
+
+      await api.post("/api/users").send(invalidUser).expect(400);
+    });
+
+    it("fails if the username is too short", async () => {
+      const invalidUser = {
+        username: "us",
+        name: "another name",
+        password: "some password",
+      };
+
+      await api.post("/api/users").send(invalidUser).expect(400);
+    });
+
+    it("fails if the password is too short", async () => {
+      const invalidUser = {
+        username: "some username",
+        name: "valid name",
+        password: "so",
+      };
+
+      await api.post("/api/users").send(invalidUser).expect(400);
+    });
+  });
+});
+
+describe("In POST requests, if the title or url are missing", () => {
   const newBlog = {
     author: "me",
     url: "blog.com i guess",
@@ -140,7 +213,7 @@ describe("In POST requests, if the title or url are missing", async () => {
   });
 });
 
-describe("DELETE requests to /api/blogs/:id", async () => {
+describe("DELETE requests to /api/blogs/:id", () => {
   const newBlog = {
     title: "test blog",
     author: "me",
@@ -154,7 +227,7 @@ describe("DELETE requests to /api/blogs/:id", async () => {
   });
 });
 
-describe("PUT requests to /api/blogs/:id", async () => {
+describe("PUT requests to /api/blogs/:id", () => {
   const newBlog = {
     title: "test blog",
     author: "me",

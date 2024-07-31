@@ -6,9 +6,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      minlength: 3,
     },
     name: String,
-    password: String,
+    password: {
+      type: String,
+      required: true,
+    },
   },
   {
     toJSON: {

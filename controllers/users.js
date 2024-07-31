@@ -8,10 +8,16 @@ usersRouter.get("/", async (request, response) => {
 });
 
 usersRouter.post("/", async (request, response) => {
+  if (request.body.password && request.body.password.length < 3) {
+    let newError = new Error("Password is too short");
+    newError.name = "ValidationError";
+    throw newError;
+  }
+
   const newUser = new User({
     username: request.body.username,
     name: request.body.name,
-    password: await bcrypt.hash(request.body.password, 10),
+    password: request.body.password && await bcrypt.hash(request.body.password, 10),
   });
 
   const userToReturn = await newUser.save();

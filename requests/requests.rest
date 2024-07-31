@@ -36,3 +36,13 @@ Content-Type: application/json
   "name": "testUser",
   "password": "12345"
 }
+
+###
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "R3LL@NA",
+  "name": "Rellana of Caria",
+  "password": "m"
+}
