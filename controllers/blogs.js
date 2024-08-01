@@ -38,8 +38,17 @@ blogsRouter.delete("/:id", async (request, response) => {
 
   const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
 
-  await Blog.findByIdAndDelete(request.params.id);
-  response.status(400).end();
+  const user = await User.findById(decodedToken.id);
+  const blog = await Blog.findById(request.params.id);
+
+  if (user.id.toString() === blog.user.toString()) {
+    await Blog.findByIdAndDelete(request.params.id);
+    response.status(200).end();
+  } else {
+    let error = new Error("a blog can only be deleted by its author");
+    error.name = "NotAuthorized";
+    throw error;
+  }
 });
 
 blogsRouter.put("/:id", async (request, response) => {

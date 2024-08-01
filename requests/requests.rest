@@ -3,17 +3,18 @@ GET http://localhost:3003/api/blogs
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY2YThiNmZiMTRhM2YxN2RlZjgwYWQ2NSIsImlhdCI6MTcyMjUzNDAxNH0.TFkyEezEh_CDyGvU6irHFbbHsOmtaOvpl_282yXyVbE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY2YThiNmZiMTRhM2YxN2RlZjgwYWQ2NSIsImlhdCI6MTcyMjUzNTY1N30.8J0pKsfjg7w0ToIpANrZmqRDv62ulZdCl7BIJOxE2eE
 
 {
-  "title": "Testing  Yet Again!",
+  "title": "Testing Yet Again!",
   "author": "me!",
   "url": "dont have one!",
   "likes": 99999
 }
 
 ###
-DELETE http://localhost:3003/api/blogs/669e978436d55c1e67836d19
+DELETE http://localhost:3003/api/blogs/66abcfc0eb365d3a9b5b37bb
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY2YThiNmZiMTRhM2YxN2RlZjgwYWQ2NSIsImlhdCI6MTcyMjUzNTY1N30.8J0pKsfjg7w0ToIpANrZmqRDv62ulZdCl7BIJOxE2eE
 
 ###
 PUT http://localhost:3003/api/blogs/669ea62f2ee3f9bad78fb80a

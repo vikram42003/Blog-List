@@ -223,7 +223,7 @@ describe("DELETE requests to /api/blogs/:id", () => {
 
   it("deletes blog with the given id", async () => {
     const res = await api.post("/api/blogs").send(newBlog);
-    await api.delete(`/api/blogs/${res.body.id}`).expect(400);
+    await api.delete(`/api/blogs/${res.body.id}`).expect(200);
   });
 });
 
