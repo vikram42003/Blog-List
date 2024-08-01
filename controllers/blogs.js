@@ -19,12 +19,6 @@ blogsRouter.post("/", async (request, response) => {
 
   const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
 
-  if (!decodedToken.id) {
-    let error = new Error("the token is invalid");
-    error.name = "InvalidToken";
-    throw error;
-  }
-
   const user = await User.findById(decodedToken.id);
   blog.user = user.id;
 
@@ -36,6 +30,14 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
+  if (!request.body.token) {
+    let error = new Error("json web token is missing");
+    error.name = "MissingToken";
+    throw error;
+  }
+
+  const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
+
   await Blog.findByIdAndDelete(request.params.id);
   response.status(400).end();
 });
