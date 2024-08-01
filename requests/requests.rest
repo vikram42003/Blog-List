@@ -46,3 +46,12 @@ Content-Type: application/json
   "name": "Rellana of Caria",
   "password": "m"
 }
+
+###
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "test",
+  "password": "12345"
+}
