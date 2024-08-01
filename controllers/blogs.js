@@ -1,4 +1,5 @@
 const blogsRouter = require("express").Router();
+const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
@@ -8,14 +9,28 @@ blogsRouter.get("/", async (request, response) => {
 });
 
 blogsRouter.post("/", async (request, response) => {
+  if (!request.body.token) {
+    let error = new Error("json web token is missing");
+    error.name = "MissingToken";
+    throw error;
+  }
+
   const blog = new Blog(request.body);
 
-  const tempUserToAssignTheBlogTo = (await User.find({}))[0];
-  blog.user = tempUserToAssignTheBlogTo.id;
+  const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
+
+  if (!decodedToken.id) {
+    let error = new Error("the token is invalid");
+    error.name = "InvalidToken";
+    throw error;
+  }
+
+  const user = await User.findById(decodedToken.id);
+  blog.user = user.id;
 
   const savedBlog = await blog.save();
-  tempUserToAssignTheBlogTo.blogs = tempUserToAssignTheBlogTo.blogs.concat(savedBlog._id);
-  tempUserToAssignTheBlogTo.save();
+  user.blogs = user.blogs.concat(savedBlog._id);
+  user.save();
 
   response.status(201).json(savedBlog);
 });

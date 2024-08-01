@@ -3,6 +3,7 @@ GET http://localhost:3003/api/blogs
 ###
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3QiLCJpZCI6IjY2YThiNmZiMTRhM2YxN2RlZjgwYWQ2NSIsImlhdCI6MTcyMjUzNDAxNH0.TFkyEezEh_CDyGvU6irHFbbHsOmtaOvpl_282yXyVbE
 
 {
   "title": "Testing Again!",
@@ -55,3 +56,5 @@ Content-Type: application/json
   "username": "test",
   "password": "12345"
 }
+
+###

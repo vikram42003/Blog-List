@@ -7,6 +7,7 @@ const cors = require("cors");
 const config = require("./utils/config");
 const logger = require("./utils/logger");
 const middleware = require("./utils/middleware");
+const tokenExtractor = require("./utils/tokenExtractor");
 
 const loginRouter = require("./controllers/login");
 const usersRouter = require("./controllers/users");
@@ -24,6 +25,7 @@ mongoose
 
 app.use(cors());
 app.use(express.json());
+app.use(tokenExtractor);
 app.use("/api/login", loginRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/blogs", blogsRouter);

@@ -9,6 +9,10 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).json({ error: "the username has already been taken" });
   } else if (error.name === "InvalidLoginDetails") {
     return response.status(400).json({ error: error.message });
+  } else if (error.name === "MissingToken") {
+    return response.status(400).json({ error: error.message });
+  } else if (error.name === "InvalidToken") {
+    return response.status(401).json({ error: error.message });
   }
 
   next(error);
