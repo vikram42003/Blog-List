@@ -1,4 +1,4 @@
-const { it, describe, beforeEach, after } = require("node:test");
+const { it, describe, before, beforeEach, after } = require("node:test");
 const assert = require("node:assert");
 const supertest = require("supertest");
 const mongoose = require("mongoose");
@@ -56,6 +56,21 @@ describe("GET requests to 'api/blogs'", () => {
 });
 
 describe("POST requests to api/blogs", () => {
+  const testUser = {
+    username: "testUser",
+    password: "admin",
+  };
+
+  let token;
+
+  before(async () => {
+    await User.deleteMany({});
+    await api.post("/api/users").send(testUser);
+    const res = await api.post("/api/login").send(testUser);
+    token = res.body.token;
+    testUser.id = res.body.id;
+  });
+
   const newBlog = {
     title: "test blog",
     author: "me",
@@ -66,6 +81,7 @@ describe("POST requests to api/blogs", () => {
   it("a new blog is created", async () => {
     await api
       .post("/api/blogs")
+      .auth(token, { type: "bearer" })
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -78,6 +94,7 @@ describe("POST requests to api/blogs", () => {
   it("contents of the new blog are correct", async () => {
     await api
       .post("/api/blogs")
+      .auth(token, { type: "bearer" })
       .send(newBlog)
       .expect(201)
       .expect("Content-Type", /application\/json/);
@@ -99,33 +116,46 @@ describe("POST requests to api/blogs", () => {
 
     assert(isBlogPresent);
   });
-});
 
-describe("In POST request to /api/blogs, if the like property is missing", () => {
-  const newBlog = {
-    title: "test blog",
-    author: "me",
-    url: "blog.com i guess",
-  };
+  describe("if the like property is missing", () => {
+    const newBlog = {
+      title: "test blog",
+      author: "me",
+      url: "blog.com i guess",
+    };
 
-  it("the new note is save in the server with 0 likes", async () => {
-    await api
-      .post("/api/blogs")
-      .send(newBlog)
-      .expect(201)
-      .expect("Content-Type", /application\/json/);
+    it("the new note is save in the server with 0 likes", async () => {
+      await api
+        .post("/api/blogs")
+        .auth(token, { type: "bearer" })
+        .send(newBlog)
+        .expect(201)
+        .expect("Content-Type", /application\/json/);
 
-    const blogs = await test_helper.blogsInDb();
+      const blogs = await test_helper.blogsInDb();
 
-    const areLikeZero = blogs.some(blog => {
-      if (blog.name === newBlog.name) {
-        if (blog.likes === 0) return true;
-      } else {
-        return false;
-      }
+      const areLikeZero = blogs.some(blog => {
+        if (blog.name === newBlog.name) {
+          if (blog.likes === 0) return true;
+        } else {
+          return false;
+        }
+      });
+
+      assert(areLikeZero);
     });
+  });
 
-    assert(areLikeZero);
+  describe("if the title or url are missing", () => {
+    const newBlog = {
+      author: "me",
+      url: "blog.com i guess",
+      likes: 1,
+    };
+
+    it("server responds with 400", async () => {
+      await api.post("/api/blogs").auth(token, { type: "bearer" }).send(newBlog).expect(400);
+    });
   });
 });
 
@@ -201,19 +231,22 @@ describe("In POST request to /api/users", () => {
   });
 });
 
-describe("In POST requests, if the title or url are missing", () => {
-  const newBlog = {
-    author: "me",
-    url: "blog.com i guess",
-    likes: 1,
+describe("DELETE requests to /api/blogs/:id", () => {
+  const testUser = {
+    username: "testUser",
+    password: "admin",
   };
 
-  it("server responds with 400", async () => {
-    await api.post("/api/blogs").send(newBlog).expect(400);
-  });
-});
+  let token;
 
-describe("DELETE requests to /api/blogs/:id", () => {
+  before(async () => {
+    await User.deleteMany({});
+    await api.post("/api/users").send(testUser);
+    const res = await api.post("/api/login").send(testUser);
+    token = res.body.token;
+    testUser.id = res.body.id;
+  });
+
   const newBlog = {
     title: "test blog",
     author: "me",
@@ -222,12 +255,27 @@ describe("DELETE requests to /api/blogs/:id", () => {
   };
 
   it("deletes blog with the given id", async () => {
-    const res = await api.post("/api/blogs").send(newBlog);
-    await api.delete(`/api/blogs/${res.body.id}`).expect(200);
+    const res = await api.post("/api/blogs").auth(token, { type: "bearer" }).send(newBlog);
+    await api.delete(`/api/blogs/${res.body.id}`).auth(token, { type: "bearer" }).expect(200);
   });
 });
 
 describe("PUT requests to /api/blogs/:id", () => {
+  const testUser = {
+    username: "testUser",
+    password: "admin",
+  };
+
+  let token;
+
+  before(async () => {
+    await User.deleteMany({});
+    await api.post("/api/users").send(testUser);
+    const res = await api.post("/api/login").send(testUser);
+    token = res.body.token;
+    testUser.id = res.body.id;
+  });
+
   const newBlog = {
     title: "test blog",
     author: "me",
@@ -243,9 +291,9 @@ describe("PUT requests to /api/blogs/:id", () => {
   };
 
   it("updates the specified blog", async () => {
-    const res = await api.post("/api/blogs").send(newBlog);
+    const res = await api.post("/api/blogs").auth(token, { type: "bearer" }).send(newBlog);
     const { body: returnedBlog } = await api.put(`/api/blogs/${res.body.id}`).send(toUpdateTo).expect(200);
-    const tempToUpdateTo = { ...toUpdateTo, id: returnedBlog.id };
+    const tempToUpdateTo = { ...toUpdateTo, id: returnedBlog.id, user: returnedBlog.user };
 
     assert.deepStrictEqual(returnedBlog, tempToUpdateTo);
   });
