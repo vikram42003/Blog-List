@@ -1,25 +1,16 @@
 const blogsRouter = require("express").Router();
-const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
-const User = require("../models/user");
+const userExtractor = require("../utils/userExtractor")
 
 blogsRouter.get("/", async (request, response) => {
   const blogs = await Blog.find({}).populate("user", { blogs: 0 });
   response.json(blogs);
 });
 
-blogsRouter.post("/", async (request, response) => {
-  if (!request.body.token) {
-    let error = new Error("json web token is missing");
-    error.name = "MissingToken";
-    throw error;
-  }
-
+blogsRouter.post("/", userExtractor, async (request, response) => {
   const blog = new Blog(request.body);
+  const user = request.user;
 
-  const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
-
-  const user = await User.findById(decodedToken.id);
   blog.user = user.id;
 
   const savedBlog = await blog.save();
@@ -29,16 +20,8 @@ blogsRouter.post("/", async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
-  if (!request.body.token) {
-    let error = new Error("json web token is missing");
-    error.name = "MissingToken";
-    throw error;
-  }
-
-  const decodedToken = jwt.verify(request.body.token, process.env.SECRET);
-
-  const user = await User.findById(decodedToken.id);
+blogsRouter.delete("/:id", userExtractor, async (request, response) => {
+  const user = request.user;
   const blog = await Blog.findById(request.params.id);
 
   if (user.id.toString() === blog.user.toString()) {
