@@ -15,6 +15,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(401).json({ error: error.message });
   } else if (error.name === "NotAuthorized") {
     return response.status(401).json({ error: error.message });
+  } else if (error.name === "MissingData") {
+    return response.status(404).json({ error: error.message });
   }
 
   next(error);
