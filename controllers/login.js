@@ -8,7 +8,7 @@ loginRouter.post("/", async (request, response) => {
 
   if (!username || !password) {
     let error = new Error("username or password are missing");
-    error.name = "InvalidLoginDetails";
+    error.name = "NotAuthorized";
     throw error;
   }
 
@@ -18,7 +18,7 @@ loginRouter.post("/", async (request, response) => {
 
   if (!user || !isPasswordCorrect) {
     let error = new Error("username or password is incorrect");
-    error.name = "InvalidLoginDetails";
+    error.name = "NotAuthorized";
     throw error;
   }
 
