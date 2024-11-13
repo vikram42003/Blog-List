@@ -292,10 +292,12 @@ describe("PUT requests to /api/blogs/:id", () => {
 
   it("updates the specified blog", async () => {
     const res = await api.post("/api/blogs").auth(token, { type: "bearer" }).send(newBlog);
-    const { body: returnedBlog } = await api.put(`/api/blogs/${res.body.id}`).send(toUpdateTo).expect(200);
-    const tempToUpdateTo = { ...toUpdateTo, id: returnedBlog.id, user: returnedBlog.user };
+    const { body: returnedBlog } = await api.put(`/api/blogs/${res.body.id}`).auth(token, { type: "bearer" }).send(toUpdateTo).expect(200);
 
-    assert.deepStrictEqual(returnedBlog, tempToUpdateTo);
+    assert.strictEqual(returnedBlog.title, toUpdateTo.title);
+    assert.strictEqual(returnedBlog.author, toUpdateTo.author);
+    assert.strictEqual(returnedBlog.url, toUpdateTo.url);
+    assert.strictEqual(returnedBlog.likes, toUpdateTo.likes);
   });
 });
 
